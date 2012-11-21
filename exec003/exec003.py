@@ -48,7 +48,7 @@ def lastDigits(factor, necessaryLast3Digits): # e. g. (67, 123), (67, 124), (68,
 
     return suitableAs
 
-def repeated_modulo_squaring(n, b, e):
+def pow(n, b, e):
     necessaryFactors = []
     currentExponent = e
     currentBase = b
