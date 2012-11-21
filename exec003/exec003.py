@@ -37,3 +37,36 @@ def add(a, b, n):
 
 def mult(a, b, n):
     return (a*b) % n
+
+def lastDigits(factor, necessaryLast3Digits): # e. g. (67, 123), (67, 124), (68, 123), (68, 124)
+    suitableAs = []
+    for a in range(0, 1001):
+        multiple = a*factor
+        last3Digits = multiple%1000
+        if last3Digits == necessaryLast3Digits:
+            suitableAs.append(a)
+
+    return suitableAs
+
+def repeated_modulo_squaring(n, b, e):
+    necessaryFactors = []
+    currentExponent = e
+    currentBase = b
+    while true:
+        currentBase = currentBase%n
+        if currentExponent == 1:
+            break
+        if currentExponent%2 == 1:
+            necessaryFactors.append(currentBase)
+        currentExponent = floor(currentExponent/2)
+        currentBase = currentBase*currentBase
+    result = currentBase
+    for currentFactor in necessaryFactors:
+        result = result*currentFactor
+    return result%n
+
+def modular_pow(base, exponent, modulus):
+    c = 1
+    for e_prime in range(1, exponent+1):
+        c = (c * base) % modulus
+    return c
