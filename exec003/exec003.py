@@ -1,5 +1,30 @@
 __author__ = 'ariksosman'
 
+def eratosthenes_new(maximum): # diese Funktion ist jetzt superschnell
+    primes = [true]*(maximum+1)
+    primes[0] = false
+    if 1<= maximum:
+        primes[1] = false
+    for i in range(2, maximum):
+        if i%2 == 0 and i > 2:
+            primes[i] = false
+            continue
+        if i*i > maximum:
+            break
+        minFactor = i
+        maxFactor = ceil(maximum/i)
+        for j in range(minFactor, maxFactor+1):
+            if i*j > maximum:
+                break
+            else:
+                primes[i*j] = false
+    primeArray = []
+    for i in range(2, maximum+1):
+        isPrime = primes[i]
+        if isPrime:
+            primeArray.append(i)
+    return primeArray
+
 def calcBezoutIdentity(a, b):
     r = [a, b]
     s = [1, 0]
@@ -70,3 +95,20 @@ def modular_pow(base, exponent, modulus):
     for e_prime in range(1, exponent+1):
         c = (c * base) % modulus
     return c
+
+def calcRSAModulus(maxProduct):
+    maxFactor = sqrt(maxProduct)
+    variance = maxFactor*0.75
+    referenceInt = int(round(random()*variance+ maxFactor - variance/2));
+    # availablePrimes = eratosthenes_new(maximum)
+    # primeCount = len(availablePrimes)
+    # p = int(round(random()*primeCount-1))
+    # q = int(round(random()*primeCount-1))
+    p = next_prime(referenceInt)
+    q = next_prime(p)
+    phi = (p-1)*(q-1)
+    factors = 'too long to calculate'
+    # factors = factor(phi)
+    n = p*q
+    print 'p =', p, ', q =', q, 'phi =', phi, ' =', factors
+    # return p, q, n
