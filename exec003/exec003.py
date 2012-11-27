@@ -99,16 +99,27 @@ def modular_pow(base, exponent, modulus):
 def calcRSAModulus(maxProduct):
     maxFactor = sqrt(maxProduct)
     variance = maxFactor*0.75
-    referenceInt = int(round(random()*variance+ maxFactor - variance/2));
-    # availablePrimes = eratosthenes_new(maximum)
-    # primeCount = len(availablePrimes)
-    # p = int(round(random()*primeCount-1))
-    # q = int(round(random()*primeCount-1))
+    referenceInt = int(round(random()*variance+ maxFactor - variance/2)) # a big integer used as anchor for next prime
     p = next_prime(referenceInt)
     q = next_prime(p)
     phi = (p-1)*(q-1)
-    factors = 'too long to calculate'
-    # factors = factor(phi)
     n = p*q
-    print 'p =', p, ', q =', q, 'phi =', phi, ' =', factors
+    e = 4
+    d = 0
+    while true:
+        e = next_prime(e)
+        if gcd(e, phi) == 1:
+            d = inv(e, phi)
+            if d > 0:
+                break
+    print 'p =', p, ', q =', q, ', phi =', phi, ', e =', e, ', d =', d
+
+    m = int(random()*500000+500000)
+    c = pow(n, m, e)
+    m2 = pow(n, c, d)
+    print '\n\nExample:'
+    print '\nLet m =', m
+    print '\nc = m^e (mod n) =', c
+    print '\nm\' = c^d (mod n) =', m2, '\n'
+
     # return p, q, n
