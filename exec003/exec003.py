@@ -96,29 +96,50 @@ def modular_pow(base, exponent, modulus):
         c = (c * base) % modulus
     return c
 
-def calcRSAModulus(maxProduct):
-    maxFactor = sqrt(maxProduct)
-    variance = maxFactor*0.75
-    referenceInt = int(round(random()*variance+ maxFactor - variance/2)) # a big integer used as anchor for next prime
-    p = next_prime(referenceInt)
-    q = next_prime(p)
-    phi = (p-1)*(q-1)
-    n = p*q
-    e = 4
-    d = 0
-    while true:
-        e = next_prime(e)
-        if gcd(e, phi) == 1:
-            d = inv(e, phi)
-            if d > 0:
-                break
-    print 'p =', p, ', q =', q, ', phi =', phi, ', e =', e, ', d =', d
+def calcRSAModulus(maxProduct): # als Parameter wird das hoechste n, gegeben, d. h. p * q <= n
 
-    m = int(random()*500000+500000)
-    c = pow(n, m, e)
-    m2 = pow(n, c, d)
+    maxFactor = sqrt(maxProduct) # ich bestimme die Wurzel aus dem hoechsten n, um es als den Wert zu haben, in dessen
+    # Naehe die beiden Primzahlen liegen muessen.
+
+    variance = maxFactor*0.75 # ich berechne die Umgebung um jenen Wurzelwert, in der ich die beiden Primzahlen suche
+
+    referenceInt = int(round(random()*variance+ maxFactor - variance/2)) # ich lasse zufaellig einen Wert in der
+    # Varianz-Umgebung generieren. random() liefert eine zufaellige Kommazahl zwischen 0 und 1. Diese multipliziere ich
+    # mit der Groesse der Umgebung, dann habe ich einen Wert zwischen 0 und der Umgebungsgroesse. Dies verschiebe ich
+    # dann so, ich einen Wert zwischen dem Wurzelwert - Varianz/2 und Wurzelwert + Varianz/2 habe.
+    # Da dies immer noch eine Kommazahl ist, runde ich sie einfach mit round(), was jedoch immer noch eine Kommazahl ist
+    # wie 5.0 oder 2.0, weshalb ich sie mit int() zu einem echten Integer konvertiere.
+
+    p = next_prime(referenceInt) # ich lasse mir von Sage die naechste Primzahl nach jener zufaelligen Zahl finden
+    q = next_prime(p) # und die danach
+    # wohlgemerkt, es ist nicht gegeben, dass p*q <= n sind, aber auf jeden Fall irgendwo in der Naehe, und das reicht mir
+
+    phi = (p-1)*(q-1) # ich berechne die Anzahl der zu p*q teilerfremden Zahlen. Weil p, q Primzahlen sind, gilt:
+    # phi(n) = (p-q)*(q-1)
+
+    n = p*q # ich berechne n
+
+    e = 4 # e ist nicht wirklich 4. Es soll teilerfremd zu phi(n) sein, das ist am einfachsten mit Primzahlen zu
+    # erreichen. Ich lasse es einfach bei 4, einer Nicht-Primzahl, starten, und in der Schleife erklaere ich weiter
+
+    d = 0 # ich lege d einfach nur fest, damit es schon ausserhalb der Schleife festgelegt ist;
+    # d ist das Modulo-inverse von e mit dem Modulus n
+
+    while true: # diese Schleife laeuft so lange, bis die wichtigen Bedingungen erfuellt sind, naemlich:
+        e = next_prime(e)
+        if gcd(e, phi) == 1: # e soll teilerfremd zu phi(n) sein
+            d = inv(e, phi)
+            if d > 0: # und d soll groesser als 0 sein, weil dies als Exponente verwendet wird
+                break
+    print '\n\n p =', p, '\n\n q =', q, '\n\n phi =', phi, '\n\n e =', e, '\n\n d =', d
+
+    m = int(random()*500000+500000) # hier ist einfach nur ein Beispiel, das berechnet wird. C ist eine Nachricht, sie
+    #wird zufaellig generiert
+
+    c = pow(n, m, e) # c ist die verschluesselte Nachricht, c = m^e mod n
+    m2 = pow(n, c, d) # m' ist die aus c entschluesselte Nachricht, mit m' = c^d mod n
     print '\n\nExample:'
-    print '\nLet m =', m
+    print '\nSei m =', m
     print '\nc = m^e (mod n) =', c
     print '\nm\' = c^d (mod n) =', m2, '\n'
 
