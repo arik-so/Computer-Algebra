@@ -127,7 +127,7 @@ def calcRSAModulus(maxProduct): # als Parameter wird das hoechste n, gegeben, d.
 
     while true: # diese Schleife laeuft so lange, bis die wichtigen Bedingungen erfuellt sind, naemlich:
         e = next_prime(e)
-        if gcd(e, phi) == 1: # e soll teilerfremd zu phi(n) sein
+        if gcd(e, phi) == 1: # e soll teilerfremd zu phi(n) sein, und mindestens 5. Deshalb startete es bei 4
             d = inv(e, phi)
             if d > 0: # und d soll groesser als 0 sein, weil dies als Exponente verwendet wird
                 break
