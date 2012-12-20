@@ -58,8 +58,7 @@ def calculateFermatWitnesses(e):
         a = a+1
         if a > 250:
             break
-        remainder = gcd(pow(f, a, f-1), f)
-        if remainder != 1:
+        if modulusBracketThingyValid(pow(f, a, f-1), 1, f) == false:
             witnesses.append(a)
 
     return witnesses
@@ -70,7 +69,7 @@ def fermatTest(allegedPrime, testCount):
 
         a = (int)((random()*(allegedPrime-2))+1) # we generate an a satisfying 1 < a < allegedPrime
 
-        if gcd(pow(allegedPrime, a, allegedPrime-1), allegedPrime) != 1:
+        if modulusBracketThingyValid(pow(allegedPrime, a, allegedPrime-1), 1, allegedPrime):
             return false # one indicator of inpramility suffices
 
     return true
@@ -115,11 +114,11 @@ def millerRabinTest(allegedPrime, trials):
 
         print 'n-1 = d * 2 ^ j =',d,'*','2 ^',j,'=',multipleOfTwo
 
-        simplePower = gcd(pow(allegedPrime, a, d), allegedPrime)
+        simplePower = pow(allegedPrime, a, d)
 
         print 'a ^ d mod n =',a,'^',d,'mod',allegedPrime,'=',simplePower
 
-        if simplePower==1:
+        if modulusBracketThingyValid(simplePower, 1, allegedPrime):
             continue
 
         for r in range(0, j+1):
@@ -153,6 +152,26 @@ def executeMultipleRabinTests(poolSize):
     return probablePrimes, wrongPrimes
 
 # old functions
+
+def lucasTest(allegedPrime, trials):
+
+    for i in range(trials):
+
+        a = (int)((random()*(allegedPrime-2))+2) # we generate an a satisfying 1 < a < allegedPrime
+
+        if modulusBracketThingyValid(pow(allegedPrime, a, allegedPrime-1), 1, allegedPrime) == false:
+            return false
+
+        subPrimeFactors = factor(allegedPrime-1)
+
+        for bEPair in subPrimeFactors:
+            primeFactor = bEPair[0]
+            if modulusBracketThingyValid(pow(allegedPrime, a, (allegedPrime-1)/primeFactor), 1, allegedPrime) != true:
+                continue
+
+        return true
+
+    return true
 
 def calcBezoutIdentity(a, b):
     r = [a, b]
@@ -194,3 +213,6 @@ def pow(modulus, base, exponent):
     for currentFactor in necessaryFactors:
         result = result*currentFactor
     return result%modulus
+
+def modulusBracketThingyValid(a, remainder, modulus):
+    return (a-remainder)%modulus == 0
